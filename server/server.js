@@ -24,13 +24,6 @@ async function startApolloServer(typeDefs, resolvers) {
   server.applyMiddleware({ app });
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
-
-  mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-    useUnifiedTopology: false
-  });
   
 
   if (process.env.NODE_ENV === "production") {
