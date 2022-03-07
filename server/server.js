@@ -3,6 +3,7 @@ const { ApolloServer } = require('apollo-server-express');
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 const { authMiddleware } = require('./utils/auth');
 const path = require('path');
+const mongoose = require("mongoose");
 const db = require('./config/connection');
 const routes = require('./routes');
 const { typeDefs, resolvers } = require("./schemas")
@@ -24,12 +25,19 @@ async function startApolloServer(typeDefs, resolvers) {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
+  mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+    useUnifiedTopology: false
+  });
+  
+
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../client")));
   }
 
   app.get("*", (req, res) => {
-    console.log("line 30 route is hit");
     res.sendFile(path.join(__dirname, "../client/index.html"));
   });
   await new Promise((res) => httpServer.listen(PORT, res));
